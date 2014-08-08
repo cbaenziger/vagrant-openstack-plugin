@@ -78,6 +78,11 @@ Vagrant.configure("2") do |config|
     os.tenant             = "YOUR TENANT_NAME" # optional
     os.floating_ip        = "33.33.33.33"      # optional (The floating IP to assign for this instance)
 
+    os.disks              = [                  # optional
+                             {"name" => "volume_name_here", "description" => "First 10GB Volume", "size" => 10},
+                             {"name" => "volume_name_here", "description" => "Second 10GB Volume", "size" => 10}
+                            ]
+
     os.orchestration_stack_name = 'stack01'				# optional
     os.orchestration_cfn_template_file = '/tmp/cfn_heat_template.json'	# optional
     os.orchestration_cfn_template_parameters = {			# optional
