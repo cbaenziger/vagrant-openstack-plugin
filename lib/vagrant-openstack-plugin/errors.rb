@@ -7,6 +7,14 @@ module VagrantPlugins
         error_namespace("vagrant_openstack.errors")
       end
 
+      class VolumeInUse < VagrantOpenStackError
+        error_key(:volume_in_use)
+      end
+
+      class VolumeBadState < VagrantOpenStackError
+        error_key(:volume_bad_state)
+      end
+
       class CreateBadState < VagrantOpenStackError
         error_key(:create_bad_state)
       end

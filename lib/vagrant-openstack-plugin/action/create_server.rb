@@ -79,6 +79,51 @@ module VagrantPlugins
             end
             env[:ui].info("options[:nics]: #{options[:nics]}")
           end
+         
+          volumes = Array.new 
+          # Find disks if provided
+          unless config.disks.empty?
+            env[:ui].info(I18n.t("vagrant_openstack.creating_disks"))
+            config.disks.each do |disk|
+              volume = env[:openstack_compute].volumes.all.find{|v| v.name ==
+                                                      disk["name"] and 
+                                                    v.description ==
+                                                      disk["description"] and
+                                                    v.size ==
+                                                      disk["size"] and
+                                                    v.ready? }
+              if volume
+                volume.ready? or raise Errors::VolumeInUse,
+                  :volume => volume["name"],
+                  :vm_id => volume.attachments[0]["serverId"]
+                # use the volume if it exists and is ready -- may be different
+                # size than specified
+                volumes << {"name" => disk["name"], "volume_id" => volume.id}
+              else
+                # create a new volume if it does not exist or the one which
+                # does is not ready
+                volumes << {"name" => disk["name"],
+                            "description" => disk["description"],
+                            "size" => disk["size"]}
+              end
+            end
+
+            volumes.each do |vol|
+              env[:ui].info("re-using volume: #{vol["name"]}") if 
+                vol.has_key?("volume_id")
+            end
+
+            puts "XXX #{volumes}"
+            volumes = volumes.each do |vol|
+              if not vol.has_key?("volume_id")
+                env[:ui].info("creating volume: #{vol["name"]}")
+                vol["volume_id"] = env[:openstack_compute].create_volume(
+                                     vol["name"], vol["description"], vol["size"]).\
+                                     data[:body]["volume"]["id"]
+              end
+            end
+            puts "XXX #{volumes}"
+          end
           
           # Output the settings we're going to use to the user
           env[:ui].info(I18n.t("vagrant_openstack.launching_server"))
@@ -141,6 +186,17 @@ module VagrantPlugins
                 floater.server = server
               end
               
+              # Attach any volumes
+              volumes.each do |volume|
+                # mount points are generated garbage right now
+                # add support if your cloud supports them
+                begin
+                  server.attach_volume(volume["volume_id"], "/dev/disk#{server.volume_attachments.length + 1}")
+                rescue Excon::Errors::Error => e
+                  raise Errors::VolumeBadState, :volume => volume["name"], :state => e.message
+                end
+              end
+
               # store this so we can use it later
               env[:floating_ip] = floating_ip
               
