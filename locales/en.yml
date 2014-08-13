@@ -10,6 +10,8 @@ en:
       Creating disks with the folowing settings...
     deleting_server: |-
       Deleting server...
+    deleting_volumes: |-
+      Deleting volumes...
     finding_flavor: |-
       Finding flavor for server...
     finding_image: |-
@@ -66,9 +68,6 @@ en:
         Metadata must be a hash.
 
     errors:
-      volume_in_use: |-
-        The OpenStack volume '%{volume}' requested is in use by VM UUID
-        '%{vm_id}'.
       volume_bad_state: |-
         The OpenStack volume '%{volume}' requested is in an unexpected state:
         '%{state}'
@@ -109,6 +108,8 @@ en:
         Error: %{err}
       orchestration_no_template_file_error: |-
         Orchestration template file not found (%{fname}).
+      server_not_destroyed: |-
+        OpenStack server was not fully destroyed.
 
     states:
       short_active: |-

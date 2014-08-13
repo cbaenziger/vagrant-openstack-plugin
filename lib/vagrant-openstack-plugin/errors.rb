@@ -7,10 +7,6 @@ module VagrantPlugins
         error_namespace("vagrant_openstack.errors")
       end
 
-      class VolumeInUse < VagrantOpenStackError
-        error_key(:volume_in_use)
-      end
-
       class VolumeBadState < VagrantOpenStackError
         error_key(:volume_bad_state)
       end
@@ -53,6 +49,10 @@ module VagrantPlugins
 
       class OrchestrationNoTemplateFileError < VagrantOpenStackError
         error_key(:orchestration_no_template_file_error)
+      end
+
+      class ServerNotDestroyed < VagrantOpenStackError
+        error_key(:server_not_destroyed)
       end
     end
   end
