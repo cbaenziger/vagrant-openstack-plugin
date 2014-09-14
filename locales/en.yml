@@ -66,6 +66,15 @@ en:
         A username is required.
       metadata_must_be_hash: |-
         Metadata must be a hash.
+      disks:
+        specification_required: |-
+          A disk specification is required for a disk configuration (array of hashes including name, description and size keys).
+        name_required: |-
+          A disk name is required for all disk specifications.
+        description_required: |-
+          A disk description is required for all disk specifications.
+        size_required: |-
+          A disk size is required for all disk specifications.
 
     errors:
       volume_bad_state: |-

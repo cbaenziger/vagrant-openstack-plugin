@@ -201,7 +201,13 @@ module VagrantPlugins
         errors << I18n.t("vagrant_openstack.config.api_key_required") if !@api_key
         errors << I18n.t("vagrant_openstack.config.username_required") if !@username
 
-        #XXX need to validate disks array
+        if @disks and @disks.any?{|a| not a.respond_to?("include?")}
+          errors << I18n.t("vagrant_openstack.config.disks.specification_required")
+        elsif @disks
+          errors << I18n.t("vagrant_openstack.config.disks.name_required") if @disks.any?{|a| not a.include?("name")}
+          errors << I18n.t("vagrant_openstack.config.disks.description_required") if @disks.any?{|a| not a.include?("description")}
+          errors << I18n.t("vagrant_openstack.config.disks.size_required") if @disks.any?{|a| not a.include?("size")}
+        end
 
         { "OpenStack Provider" => errors }
       end
