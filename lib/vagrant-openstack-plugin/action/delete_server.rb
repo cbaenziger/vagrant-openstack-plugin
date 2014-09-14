@@ -30,13 +30,25 @@ module VagrantPlugins
                 address = env[:openstack_compute].list_all_addresses.body["floating_ips"].find{|i| i["ip"] == ip}
                 if address
                   env[:openstack_compute].release_address(address["id"])
-              server.destroy
-              status = Timeout::timeout(90, Errors::ServerNotDestroyed) {
-                while server.reload
-                  sleep(1)
-                end
-              }
+              retryable(:on => Timeout::Error, :tries => 20) do
+                # If we're interrupted don't worry about waiting
+                next if env[:interrupted]
 
+                begin
+                  server.destroy if server
+                  status = Timeout::timeout(10) {
+                    while server.reload
+                      sleep(1)
+                    end
+                  }
+                rescue RuntimeError => e
+                  # If we don't have an error about a state transition, then
+                  # we just move on.
+                  raise if e.message !~ /should have transitioned/
+                  raise Errors::ServerNotDestroyed
+                end
+              end
+                
               env[:ui].info(I18n.t("vagrant_openstack.deleting_volumes"))
               volumes.each do |compute_volume|
                 volume = env[:openstack_volume].volumes.get(compute_volume["id"])
