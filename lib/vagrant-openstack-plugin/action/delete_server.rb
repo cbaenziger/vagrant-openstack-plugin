@@ -15,9 +15,11 @@ module VagrantPlugins
 
         def call(env)
           machine = env[:machine]
-          id = machine.id || env[:openstack_compute].servers.all( :name => machine.name ).first.id
+          id = machine.id || (env[:openstack_compute].servers.all( :name => machine.name ).length > 0 and
+                              env[:openstack_compute].servers.all( :name => machine.name ).first.id)
 
-          if id
+          if id and env[:openstack_compute].servers.get(id)
+            
             volumes = env[:openstack_compute].servers.get(id).volume_attachments
 
             env[:ui].info(I18n.t("vagrant_openstack.deleting_server"))
