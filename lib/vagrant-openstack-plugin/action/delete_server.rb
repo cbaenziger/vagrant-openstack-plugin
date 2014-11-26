@@ -48,6 +48,8 @@ module VagrantPlugins
                   # we just move on.
                   raise if e.message !~ /should have transitioned/
                   raise Errors::ServerNotDestroyed
+                rescue Fog::Compute::OpenStack::NotFound
+                  # If we don't have a server anymore we should be done here just continue on
                 end
               end
                 
