@@ -15,6 +15,7 @@ This plugin started as a fork of the Vagrant RackSpace provider.
 * SSH into the instances.
 * Provision the instances with any built-in Vagrant provisioner.
 * Minimal synced folder support via `rsync`.
+* Creation and destruction of volumes with VM
 
 ## Usage
 
@@ -79,8 +80,8 @@ Vagrant.configure("2") do |config|
     os.floating_ip        = "33.33.33.33"      # optional (The floating IP to assign for this instance)
 
     os.disks              = [                  # optional
-                             {"name" => "volume_name_here", "description" => "First 10GB Volume", "size" => 10},
-                             {"name" => "volume_name_here", "description" => "Second 10GB Volume", "size" => 10}
+                             {"name" => "volume_name_here", "description" => "A 10GB Volume", "size" => 10},
+                             {"name" => "volume_name_here", "description" => "A 20GB Volume", "size" => 20}
                             ]
 
     os.orchestration_stack_name = 'stack01'				# optional
@@ -163,6 +164,7 @@ This provider exposes quite a few provider-specific configuration options:
 * `orchestration_cfn_template_parameters` - AWS CloudFormation Template
   parameters specified in ruby hash (take a look at example Vagrantfile).
   This parameter is optional.
+* `disks` - Array of disk specifications to create or attach
 
 These can be set like typical provider-specific configuration:
 
@@ -221,6 +223,7 @@ Take snapshot of ***vmname*** with name ***snapshotname***
 - [Lull3rSkat3r](https://github.com/Lull3rSkat3r)
 - [nicobrevin](https://github.com/nicobrevin)
 - [ohnoimdead](https://github.com/ohnoimdead)
+- [cbaenziger](https://github.com/cbaenziger)
 
 ## Development
 
