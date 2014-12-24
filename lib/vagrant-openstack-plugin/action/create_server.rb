@@ -112,6 +112,7 @@ module VagrantPlugins
               if floating_ip
                 env[:ui].info( "Using floating IP #{floating_ip}")
                 floater = env[:openstack_compute].addresses.find { |thisone| thisone.ip.eql? floating_ip }
+                raise Errors::FloatingIPNotFound if not floater
                 floater.server = server
               end
               
