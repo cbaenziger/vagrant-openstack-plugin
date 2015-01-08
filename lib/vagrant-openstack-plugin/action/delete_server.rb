@@ -54,7 +54,7 @@ module VagrantPlugins
 
               if machine.provider_config.floating_ip_pool
                 address = env[:openstack_compute].list_all_addresses.body["floating_ips"].find{|i| i["ip"] == ip}
-                if address
+                if address and (not machine.provider_config.floating_ip or machine.provider_config.floating_ip.to_sym == :auto)
                   env[:openstack_compute].release_address(address["id"])
                 end
               end
