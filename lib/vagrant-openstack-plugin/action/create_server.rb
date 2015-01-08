@@ -142,6 +142,7 @@ module VagrantPlugins
                   # mount points are not expected to be meaningful
                   # add useful support if your cloud respects them
                   begin
+                    server.wait_for{ env[:openstack_volume].volumes.get(disk["volume_id"]).ready? }
                     server.attach_volume(disk["volume_id"], "/dev/vd#{("a".."z").to_a[server.volume_attachments.length + 1]}")
                     server.wait_for{ volume_attachments.any?{|vol| vol["id"]==disk["volume_id"]} }
                   rescue Excon::Errors::Error => e
